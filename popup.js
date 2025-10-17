@@ -1,35 +1,105 @@
-// This script runs when the popup is opened.
+document.addEventListener("DOMContentLoaded", () => {
+  const statusText = document.getElementById("status-text");
+  const scoreValue = document.getElementById("score-value");
+  const reasonsList = document.getElementById("reasons-list");
+  const bodyElement = document.body;
+  const reportBtn = document.getElementById("report-btn");
+  const trustBtn = document.getElementById("trust-btn");
 
-// We need to get the currently active tab to find its ID
-chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  const currentTabId = tabs[0].id;
+  let currentTabId = null;
+  let currentDomain = null;
 
-  // Now, we retrieve the saved analysis result for this specific tab
-  chrome.storage.local.get([String(currentTabId)], (result) => {
-    const analysisResult = result[currentTabId];
-
-    const messageElement = document.getElementById("status-message");
-    const bodyElement = document.body;
-
+  function renderPopup(analysisResult, storedLists) {
+    const { blacklist = [], whitelist = [] } = storedLists;
     if (analysisResult) {
-      // We found a result, let's display it
-      const status = analysisResult.status;
-      let message = `Status: ${status}`;
+      let displayResult = { ...analysisResult };
+      currentDomain = new URL(analysisResult.url).hostname;
 
-      messageElement.textContent = message;
+      if (blacklist.includes(currentDomain)) {
+        displayResult.status = "DANGEROUS";
+        displayResult.score = -100;
+        displayResult.reasons = ["Manually reported as phishing by user."];
+      } else if (whitelist.includes(currentDomain)) {
+        displayResult.status = "SAFE";
+        displayResult.score = 0;
+        displayResult.reasons = ["Manually trusted by user."];
+      }
 
-      // Let's also change the popup's color for a better UX!
-      if (status === "DANGEROUS") {
-        bodyElement.style.backgroundColor = "#ffcccc"; // Light Red
-      } else if (status === "SUSPICIOUS") {
-        bodyElement.style.backgroundColor = "#fff3cd"; // Light Yellow
-      } else {
-        bodyElement.style.backgroundColor = "#d4edda"; // Light Green
+      const { status, score, reasons } = displayResult;
+      statusText.textContent = status;
+      statusText.className = `status-text status-${status}`;
+      scoreValue.textContent = score;
+
+      reasonsList.innerHTML = "";
+      if (reasons && reasons.length > 0) {
+        reasons.forEach((reason) => {
+          const li = document.createElement("li");
+          li.textContent = reason;
+          reasonsList.appendChild(li);
+        });
+      } else if (status === "SAFE") {
+        const li = document.createElement("li");
+        li.textContent = "No threats detected. Happy browsing!";
+        reasonsList.appendChild(li);
+      }
+
+      if (status === "DANGEROUS") bodyElement.style.backgroundColor = "#ffcccc";
+      else if (status === "SUSPICIOUS")
+        bodyElement.style.backgroundColor = "#fff3cd";
+      else bodyElement.style.backgroundColor = "#d4edda";
+
+      if (blacklist.includes(currentDomain)) {
+        reportBtn.disabled = true;
+        reportBtn.textContent = "Reported";
+        trustBtn.disabled = false;
+      } else if (whitelist.includes(currentDomain)) {
+        trustBtn.disabled = true;
+        trustBtn.textContent = "Trusted";
+        reportBtn.disabled = false;
       }
     } else {
-      // If for some reason no result was found
-      messageElement.textContent = "No analysis result found for this page.";
-      bodyElement.style.backgroundColor = "#f0f0f0"; // Light Grey
+      statusText.textContent = "Not Analyzed";
+      scoreValue.textContent = "N/A";
+      bodyElement.style.backgroundColor = "#f0f0f0";
+      reportBtn.style.display = "none";
+      trustBtn.style.display = "none";
     }
+  }
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (!tabs || tabs.length === 0 || !tabs[0].id) return;
+    currentTabId = tabs[0].id;
+    const currentTabIdStr = String(currentTabId);
+    chrome.storage.local.get(
+      [currentTabIdStr, "blacklist", "whitelist"],
+      (result) => {
+        const analysisResult = result[currentTabIdStr];
+        renderPopup(analysisResult, result);
+      }
+    );
+  });
+
+  reportBtn.addEventListener("click", () => {
+    chrome.storage.local.get(["blacklist", "whitelist"], (result) => {
+      let { blacklist = [], whitelist = [] } = result;
+      if (!blacklist.includes(currentDomain)) blacklist.push(currentDomain);
+      whitelist = whitelist.filter((d) => d !== currentDomain);
+      chrome.storage.local.set({ blacklist, whitelist }, () => {
+        chrome.tabs.reload(currentTabId);
+        window.close();
+      });
+    });
+  });
+
+  trustBtn.addEventListener("click", () => {
+    chrome.storage.local.get(["blacklist", "whitelist"], (result) => {
+      let { blacklist = [], whitelist = [] } = result;
+      if (!whitelist.includes(currentDomain)) whitelist.push(currentDomain);
+      blacklist = blacklist.filter((d) => d !== currentDomain);
+      chrome.storage.local.set({ blacklist, whitelist }, () => {
+        chrome.tabs.reload(currentTabId);
+        window.close();
+      });
+    });
   });
 });

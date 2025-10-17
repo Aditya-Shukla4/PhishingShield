@@ -1,0 +1,83 @@
+body {
+  width: 300px;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 10px;
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+
+.header {
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.status-text {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.status-SAFE {
+  color: #155724;
+}
+.status-SUSPICIOUS {
+  color: #856404;
+}
+.status-DANGEROUS {
+  color: #721c24;
+}
+
+.report-card {
+  text-align: left;
+}
+
+.score {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+#reasons-list {
+  list-style-type: "⚠️  ";
+  padding-left: 20px;
+  margin: 0;
+  font-size: 13px;
+}
+
+/* Styling for the new buttons */
+.user-actions {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn {
+  width: 48%;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.btn.report {
+  background-color: #dc3545; /* Red */
+}
+
+.btn.trust {
+  background-color: #28a745; /* Green */
+}

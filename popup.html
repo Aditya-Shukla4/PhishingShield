@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Phishing Shield</title>
-    <style>
-      body {
-        width: 250px;
-        font-family: Arial, sans-serif;
-        text-align: center;
-      }
-      h1 {
-        font-size: 18px;
-        color: #333;
-      }
-      p {
-        font-size: 14px;
-        font-weight: bold;
-      }
-    </style>
+    <title>Phishing Shield Report</title>
+    <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <h1>Phishing Shield</h1>
-    <p id="status-message">Initializing...</p>
+    <div class="header">
+      <h1>Phishing Shield</h1>
+      <p id="status-text" class="status-text">Analyzing...</p>
+    </div>
 
+    <div class="report-card">
+      <p class="score">Threat Score: <strong id="score-value">...</strong></p>
+      <ul id="reasons-list"></ul>
+    </div>
+
+    <div class="user-actions">
+      <button id="report-btn" class="btn report">Report as Phishing</button>
+      <button id="trust-btn" class="btn trust">Trust this Site</button>
+    </div>
     <script src="popup.js"></script>
   </body>
 </html>
