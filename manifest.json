@@ -1,11 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Phishing Shield",
-  "version": "1.2.0",
+  "version": "1.5.0",
   "description": "A real-time phishing detection tool to keep you safe.",
-
-  "permissions": ["activeTab", "storage", "tabs"],
-
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs"
+  ],
   "action": {
     "default_popup": "src/popup/popup.html",
     "default_icon": {
@@ -13,16 +15,21 @@
       "48": "src/assets/icons/safe_48.png"
     }
   },
-
   "background": {
     "service_worker": "src/background/background.js"
   },
-
   "icons": {
     "16": "src/assets/icons/safe_16.png",
     "48": "src/assets/icons/safe_48.png",
     "128": "src/assets/icons/safe_128.png"
   },
+  "options_page": "src/options/options.html",
 
-  "options_page": "src/options/options.html"
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/content/content.js"],
+      "run_at": "document_idle"
+    }
+  ]
 }

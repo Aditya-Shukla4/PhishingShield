@@ -1,21 +1,22 @@
 // =================================================================
 // === API KEY YAHAN PASTE KARO ===
-const API_KEY = "YAHAN_APNI_API_KEY_DAALO";
+const API_KEY = "AIzaSyCmuPaH1HULd7IVw7C5sUrRW7sHi8TV-lE";
+const WHOIS_API_KEY = "at_56LwXSlfVXdvq8bbdgAXoEFSboKxH";
 // =================================================================
 
 /**
- * Calls the Google Safe Browsing API to check if a URL is a known threat.
- * @param {string} url The URL to check.
- * @returns {Promise<object|null>} The threat match object if found, otherwise null.
+ * Calls the Google Safe Browsing API.
  */
 async function checkGoogleSafeBrowsing(url) {
-  if (!API_KEY || API_KEY === "YAHAN_APNI_API_KEY_DAALO") {
-    console.log("API Key not found. Skipping Google Safe Browsing check.");
+  if (!API_KEY || API_KEY.includes("YAHAN_APNI")) {
+    console.log(
+      "Google API Key not found. Skipping Google Safe Browsing check."
+    );
     return null;
   }
   const apiUrl = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${API_KEY}`;
   const payload = {
-    client: { clientId: "PhishingShield", clientVersion: "1.3.0" },
+    client: { clientId: "PhishingShield", clientVersion: "1.5.0" },
     threatInfo: {
       threatTypes: [
         "MALWARE",
@@ -35,10 +36,7 @@ async function checkGoogleSafeBrowsing(url) {
       body: JSON.stringify(payload),
     });
     if (!response.ok) {
-      console.error(
-        "Safe Browsing API request failed with status:",
-        response.status
-      );
+      console.error("Safe Browsing API request failed:", response.status);
       return null;
     }
     const data = await response.json();
@@ -49,15 +47,14 @@ async function checkGoogleSafeBrowsing(url) {
   }
 }
 
-/**
- * Analyzes a URL based on a local set of heuristic rules.
- * @param {string} url The URL to analyze.
- * @returns {object} An object containing the analysis result.
- */
 function analyzeUrl(url) {
   let score = 0;
   let reasons = [];
   const domain = new URL(url).hostname;
+  if (!url.startsWith("https://")) {
+    score -= 15;
+    reasons.push("Site is not secure (uses HTTP).");
+  }
   const suspiciousKeywords = [
     "login",
     "verify",
@@ -75,7 +72,7 @@ function analyzeUrl(url) {
   });
   if (url.includes("@")) {
     score -= 50;
-    reasons.push("URL contains '@' symbol (classic phishing trick).");
+    reasons.push("URL contains '@' symbol.");
   }
   const ipRegex = /^(https?:\/\/)?(\d{1,3}\.){3}\d{1,3}/;
   if (ipRegex.test(url)) {
@@ -84,7 +81,7 @@ function analyzeUrl(url) {
   }
   if ((domain.match(/\./g) || []).length > 3) {
     score -= 20;
-    reasons.push("URL has an excessive number of subdomains.");
+    reasons.push("URL has excessive subdomains.");
   }
   const shorteners = ["bit.ly", "t.co", "tinyurl.com"];
   if (shorteners.some((shortener) => domain.includes(shortener))) {
@@ -94,21 +91,43 @@ function analyzeUrl(url) {
   let status = "SAFE";
   if (score <= -50) {
     status = "DANGEROUS";
-  } else if (score <= -20) {
+  } else if (score < 0) {
     status = "SUSPICIOUS";
   }
   if (status !== "SAFE" && reasons.length === 0) {
-    reasons.push("Flagged by general security heuristics.");
+    reasons.push("Flagged by general heuristics.");
   }
   return { status, score, url, reasons };
 }
 
-/**
- * Updates the extension's icon and badge in the toolbar.
- * @param {number} tabId The ID of the tab to update.
- * @param {string} status The status to set ('SAFE', 'SUSPICIOUS', 'DANGEROUS').
- * @param {number} score The threat score.
- */
+async function getDomainAge(domain, apiKey) {
+  if (!apiKey || apiKey.includes("YAHAN_APNI")) {
+    return null;
+  }
+  const apiUrl = `https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=${apiKey}&domainName=${domain}&outputFormat=JSON`;
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      console.error("Whois API request failed:", response.status);
+      return null;
+    }
+    const data = await response.json();
+    const creationDateStr = data.WhoisRecord.createdDate;
+    if (creationDateStr) {
+      const creationDate = new Date(creationDateStr);
+      const today = new Date();
+      const ageInDays = Math.floor(
+        (today - creationDate) / (1000 * 60 * 60 * 24)
+      );
+      return ageInDays;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error calling Whois API:", error);
+    return null;
+  }
+}
+
 function updateActionIcon(tabId, status, score) {
   const iconPaths = {
     SAFE: {
@@ -136,10 +155,6 @@ function updateActionIcon(tabId, status, score) {
   chrome.action.setBadgeBackgroundColor({ tabId: tabId, color: badgeColor });
 }
 
-/**
- * Saves the latest scan result to the user's history.
- * @param {object} result The analysis result object.
- */
 async function updateScanHistory(result) {
   const { scanHistory = [] } = await chrome.storage.local.get("scanHistory");
   const newHistoryEntry = {
@@ -152,7 +167,7 @@ async function updateScanHistory(result) {
   await chrome.storage.local.set({ scanHistory: trimmedHistory });
 }
 
-// --- Main Event Listener ---
+// --- Main Event Listener for Tab Updates ---
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (
     changeInfo.status === "complete" &&
@@ -166,9 +181,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       "blacklist",
       "whitelist",
     ]);
-    let finalResult; // Define a single variable to hold the outcome
+    let finalResult;
 
-    // 1. Check user-defined lists first (highest priority)
     if (whitelist.includes(domain)) {
       finalResult = {
         status: "SAFE",
@@ -184,7 +198,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         reasons: ["Manually reported as phishing by user."],
       };
     } else {
-      // 2. If not in user lists, check Google Safe Browsing
       const googleThreat = await checkGoogleSafeBrowsing(url);
       if (googleThreat) {
         const reason = `Flagged by Google as ${googleThreat.threatType}.`;
@@ -195,19 +208,35 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           reasons: [reason],
         };
       } else {
-        // 3. If Google finds nothing, run our local analysis
         finalResult = analyzeUrl(url);
+        const domainAge = await getDomainAge(domain, WHOIS_API_KEY);
+        if (domainAge !== null && domainAge < 30) {
+          finalResult.score -= 25;
+          finalResult.reasons.push(
+            `Domain is very new (${domainAge} days old).`
+          );
+          if (finalResult.score <= -50) finalResult.status = "DANGEROUS";
+          else if (finalResult.score < 0) finalResult.status = "SUSPICIOUS";
+        }
       }
     }
 
-    // Perform all final actions once
     updateActionIcon(tabId, finalResult.status, finalResult.score);
     await chrome.storage.local.set({ [tabId]: finalResult });
     await updateScanHistory(finalResult);
-
     console.log(
       `Result for tab ${tabId} saved and history updated:`,
       finalResult
     );
   }
+});
+
+// --- Listener for messages from content scripts ---
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "DECEPTIVE_FORM_FOUND") {
+    console.log("Message received from content script:", message);
+    // Logic to update score will be added here in the next step
+    sendResponse({ status: "Message received by background script" });
+  }
+  return true; // Required for async sendResponse
 });
