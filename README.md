@@ -114,4 +114,4 @@ This project is licensed under the **MIT License**. See the [LICENSE](/Aditya-Sh
 **Aditya Shukla**
 
 * [GitHub Profile](https://github.com/Aditya-Shukla4) 
-* [Gmail](https://github.com/Aditya-Shukla4) 
+* [Gmail](As1384909@gmail.com) 
