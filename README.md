@@ -74,16 +74,16 @@ While currently relying on heuristics, our vision is to incorporate a mechanism 
 
 ## 🚀 Enhancements and Future Roadmap
 
-Our goal is continuous improvement to stay ahead of malicious actors. Future planned enhancements include:
-
-| Category | Enhancement Detail | Status |
-| :--- | :--- | :--- |
-| **Detection** | **Machine Learning Integration:** Develop a local or cloud-based ML model to analyze page content, HTML structure, and favicon history for a deeper level of security. | *Planned* |
-| **Usability** | **Customizable Whitelist:** Allow users to manually whitelist trusted domains to avoid unnecessary warnings. | *To Do* |
-| **Feedback** | **Decentralized Threat Database:** Implement a system to securely share anonymized threat data across users, allowing the extension to learn from the community's input. | *Vision* |
-| **Performance** | **Multi-Browser Support:** Official support and publication for Firefox, Edge, and other popular browser stores. | *To Do* |
-| **Interface** | **Detailed Risk Report:** When a threat is detected, provide a brief, educational report explaining *why* the site was flagged (e.g., "Suspicious domain age," "Too many redirects"). | *To Do* |
-
+| Feature | Status |
+| :--- | :--- |
+| Detailed "Report Card" Popup | ✅ Completed |
+| User-Managed Whitelist/Blacklist | ✅ Completed |
+| Scan History Tracking | ✅ Completed |
+| Google Safe Browsing & Whois API Integration | ✅ Completed |
+| Browser Notifications (Toast Alerts) | ⏳ To Do |
+| On-Page Content Analysis (Content Scripts) | ⏳ To Do |
+| Multi-Browser Support (Firefox, Edge) | ⏳ To Do |
+| Machine Learning Integration | 🔭 Planned |
 ---
 
 ## 🛠️ Installation
@@ -109,7 +109,7 @@ You need a Chromium-based browser (like Chrome or Brave) or Firefox to install a
 
 * **Core Language:** JavaScript
 * **Frontend:** HTML5, CSS3
-* **Browser APIs:** Chrome/Web Extension APIs (`webRequest`, `tabs`, `storage`)
+* Browser APIs: chrome.tabs, chrome.storage, chrome.action, chrome.runtime
 
 ---
 
