@@ -1,9 +1,8 @@
 # PhishingShield 🛡️
 
-**A robust, real-time browser extension to detect and warn users against sophisticated phishing threats.** 
-**SecureSurf Shield** is a powerful browser extension designed to protect users from phishing, malware, and other online threats through a sophisticated, multi-layered analysis of every URL in real-time.
+**A robust, real-time browser extension that detects and warns users against sophisticated phishing threats through a sophisticated, multi-layered analysis of every URL.**
 
-[![GitHub license](https://img.shields.io/github/license/Aditya-Shukla4/PhishingShield)](/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/Aditya-Shukla4/PhishingShield)](https://github.com/Aditya-Shukla4/PhishingShield/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/Aditya-Shukla4/PhishingShield?style=social)](https://github.com/Aditya-Shukla4/PhishingShield/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/Aditya-Shukla4/PhishingShield?style=social)](https://github.com/Aditya-Shukla4/PhishingShield/network/members)
 
@@ -15,38 +14,19 @@ The digital landscape is constantly under siege from evolving phishing attacks. 
 
 ---
 
-## ✨ Key Features
-
-PhishingShield utilizes simple, yet powerful JavaScript techniques to analyze web pages and URLs instantaneously, offering the following core protections:
-
-* **Real-Time Phishing Detection:** The extension actively monitors the visited URL immediately upon navigation, comparing it against a set of heuristic rules and known malicious patterns.
-* **Intuitive Warning System:** When a suspicious or confirmed phishing site is detected, the user is immediately shown a **prominent and unavoidable alert**, preventing them from entering sensitive information.
-* **Domain Heuristics Analysis:** It analyzes several key indicators of potential phishing, including:
-    * **Suspicious Character/Homograph Detection** (e.g., using Unicode characters that look like Latin letters).
-    * **Sub-Domain and Path Scrutiny** (e.g., deeply nested or excessively long URLs).
-    * **Common Brand Impersonation** (identifying attempts to mimic popular banking or e-commerce domains).
-* **Lightweight & Fast:** Built purely with Vanilla JavaScript, HTML, and CSS, ensuring minimal impact on browser performance and fast detection times.
-* **Immediate Feedback:** Provides a quick, one-click mechanism for users to report potential false positives or flag a new phishing site.
-
----
-
-
 ## ✨ Core Features Implemented
 
 ### 🛡️ Multi-Layered Threat Detection
 
-The extension employs a robust, four-step process to ensure maximum security:
+The extension employs a robust, four-step process to analyze URLs in real-time and ensure maximum security:
 
 1.  **User-Defined Lists (Highest Priority):**
     * **Whitelist:** URLs on this list are considered **always safe** and bypass further checks.
     * **Blacklist:** URLs on this list are considered **always dangerous** and are blocked immediately.
-
 2.  **Google Safe Browsing API:**
-    * The URL is checked against Google's massive, frequently updated database of known threats, including phishing and malware sites.
-
+    * The URL is checked against Google's massive, frequently updated database of known threats (phishing, malware, etc.).
 3.  **Domain Age Analysis (Whois API):**
     * The domain's registration date is retrieved. **Very new domains (e.g., less than 30 days old)** are heavily penalized, as they are frequently used for 'hit-and-run' phishing campaigns.
-
 4.  **Heuristic Analysis (Final Check):**
     * The URL is scrutinized for suspicious patterns and characteristics:
         * Insecure protocols (`http` instead of `https`).
@@ -54,55 +34,41 @@ The extension employs a robust, four-step process to ensure maximum security:
         * Use of raw **IP addresses** instead of a domain name.
         * An excessive number of **subdomains**.
 
-***
-
 ### 🖥️ Advanced User Interface (UI) & Experience (UX)
 
 Security information is delivered to the user clearly and intuitively:
 
-* **Dynamic Icon and Badge:** The extension icon provides at-a-glance threat information:
-    * **Green:** Safe.
-    * **Yellow:** Suspicious (Warning).
-    * **Red:** Dangerous (Blocked).
-    * A numerical **threat score** is displayed on the icon's badge.
-* **Detailed "Report Card" Popup:** Clicking the extension icon displays a comprehensive breakdown:
-    * Final security status.
-    * The total calculated threat score.
-    * A detailed list of the **specific reasons** why the site was flagged (e.g., "Flagged by Google Safe Browsing," "New Domain (2 days old)," "Found 'login' keyword in URL").
-
-* **Full "Control Room" (Settings Page):** A dedicated options page for users to manage their settings:
-    * View and edit their personal **Whitelist** and **Blacklist**.
-    * Access the **Scan History**.
-
-* **Scan History:** The settings page keeps a history of the **last 10 scanned websites** and their final security results for review.
-
-***
+* **Dynamic Icon and Badge:** The extension icon changes color based on the threat level (Green/Yellow/Red) and displays a numerical **threat score** on a badge for at-a-glance information.
+* **Detailed "Report Card" Popup:** Clicking the icon displays a comprehensive breakdown: final security status, the calculated threat score, and a list of specific reasons why the site was flagged.
+* **Full "Control Room" (Settings Page):** A dedicated options page for users to manage their personal **Whitelist** and **Blacklist**, and access the **Scan History**.
+* **Scan History:** Displays a history of the **last 10 scanned websites** and their final security results for easy review.
 
 ### 💻 Professional Codebase
 
 The extension is built on a modern, maintainable, and efficient foundation:
 
-* **Organized Structure:** The code is logically organized into a clean folder structure (`background`, `popup`, `options`, `content`, `assets`) following best practices for Chrome/Firefox extensions.
+* **Organized Structure:** The code is logically organized into a clean folder structure (`background`, `popup`, `options`, `content`, `assets`) following best practices for web extensions.
 * **Asynchronous Operations:** All API calls and heavy operations utilize **modern `async/await` syntax** to ensure the browser remains responsive and the UI never freezes during a security scan.
-***
+
+---
+
 ## 🔬 Core Detection Logic (The "Uniqueness")
 
 PhishingShield's strength lies in its **heuristic analysis**—a set of rules that identify characteristics unique to malicious URLs, moving beyond simple static blacklists. Our detection model is based on the following key metrics:
 
 ### 1. **URL Structure Anomaly Detection**
 We flag URLs that exhibit common phisher tactics to confuse users:
-* **Length-Based Suspicion:** URLs exceeding **100 characters** are marked as highly suspicious, as legitimate sites rarely require such long addresses.
-* **Excessive Sub-domains:** We analyze the domain structure. URLs with **more than three periods** (e.g., `login.verify.paypal.com.scam-site.net`) are flagged, as legitimate sites keep their domain structure simple.
+* **Length-Based Suspicion:** URLs exceeding **100 characters** are marked as highly suspicious.
+* **Excessive Sub-domains:** URLs with **more than three periods** (e.g., `login.verify.paypal.com.scam-site.net`) are flagged.
 * **IP Address Hostname:** Direct use of an **IP address** (e.g., `http://192.168.1.1/login`) instead of a domain name is a strong indicator of a non-standard, potentially malicious site.
 
 ### 2. **Visual & Character Impersonation**
 This is a critical layer for detecting modern, subtle attacks:
-* **Homograph Attacks (Punny Code):** The extension scans the URL for **non-ASCII (Unicode)** characters that are visually identical to standard Latin letters (e.g., using 'а' from the Cyrillic alphabet instead of 'a'). This is a primary method phishers use to spoof popular brand names.
+* **Homograph Attacks (Punny Code):** The extension scans the URL for **non-ASCII (Unicode)** characters that are visually identical to standard Latin letters (e.g., using 'а' from the Cyrillic alphabet instead of 'a').
 * **Brand Keyword Scrutiny:** We look for combinations of popular keywords (like *'google,' 'amazon,' 'bank'*) paired with suspicious suffixes or misspellings within the main domain name.
 
 ### 3. **Real-Time Data Feeds (Future Vision)**
-While currently relying on heuristics, our vision is to incorporate a mechanism that:
-* **Feeds New Threat Data:** Allows the extension to ingest and quickly apply recently reported phishing patterns and simple blacklisted domains, offering **zero-day protection** against emerging threats.
+While currently relying on heuristics, our vision is to incorporate a mechanism that allows the extension to ingest and quickly apply recently reported phishing patterns and simple blacklisted domains, offering **zero-day protection** against emerging threats.
 
 ---
 
@@ -161,7 +127,7 @@ We welcome contributions! Whether it's adding a new detection heuristic, fixing 
 
 ## 📜 License
 
-This project is licensed under the **MIT License**. See the [LICENSE](/Aditya-Shukla4/PhishingShield/blob/main/LICENSE) file for details.
+This project is licensed under the **MIT License**. See the [LICENSE file](https://github.com/Aditya-Shukla4/PhishingShield/blob/main/LICENSE) for details.
 
 ---
 
@@ -169,5 +135,5 @@ This project is licensed under the **MIT License**. See the [LICENSE](/Aditya-Sh
 
 **Aditya Shukla**
 
-* [GitHub Profile](https://github.com/Aditya-Shukla4) 
-* [Gmail](As1384909@gmail.com) 
+* [GitHub Profile](https://github.com/Aditya-Shukla4)
+* [Email](mailto:As1384909@gmail.com)
