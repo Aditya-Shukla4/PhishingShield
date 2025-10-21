@@ -1,6 +1,7 @@
 # PhishingShield 🛡️
 
-**A robust, real-time browser extension to detect and warn users against sophisticated phishing threats.**
+**A robust, real-time browser extension to detect and warn users against sophisticated phishing threats.** 
+**SecureSurf Shield** is a powerful browser extension designed to protect users from phishing, malware, and other online threats through a sophisticated, multi-layered analysis of every URL in real-time.
 
 [![GitHub license](https://img.shields.io/github/license/Aditya-Shukla4/PhishingShield)](/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/Aditya-Shukla4/PhishingShield?style=social)](https://github.com/Aditya-Shukla4/PhishingShield/stargazers)
@@ -28,6 +29,61 @@ PhishingShield utilizes simple, yet powerful JavaScript techniques to analyze we
 * **Immediate Feedback:** Provides a quick, one-click mechanism for users to report potential false positives or flag a new phishing site.
 
 ---
+
+
+## ✨ Core Features Implemented
+
+### 🛡️ Multi-Layered Threat Detection
+
+The extension employs a robust, four-step process to ensure maximum security:
+
+1.  **User-Defined Lists (Highest Priority):**
+    * **Whitelist:** URLs on this list are considered **always safe** and bypass further checks.
+    * **Blacklist:** URLs on this list are considered **always dangerous** and are blocked immediately.
+
+2.  **Google Safe Browsing API:**
+    * The URL is checked against Google's massive, frequently updated database of known threats, including phishing and malware sites.
+
+3.  **Domain Age Analysis (Whois API):**
+    * The domain's registration date is retrieved. **Very new domains (e.g., less than 30 days old)** are heavily penalized, as they are frequently used for 'hit-and-run' phishing campaigns.
+
+4.  **Heuristic Analysis (Final Check):**
+    * The URL is scrutinized for suspicious patterns and characteristics:
+        * Insecure protocols (`http` instead of `https`).
+        * Phishing keywords (e.g., `login`, `secure`, `bank`).
+        * Use of raw **IP addresses** instead of a domain name.
+        * An excessive number of **subdomains**.
+
+***
+
+### 🖥️ Advanced User Interface (UI) & Experience (UX)
+
+Security information is delivered to the user clearly and intuitively:
+
+* **Dynamic Icon and Badge:** The extension icon provides at-a-glance threat information:
+    * **Green:** Safe.
+    * **Yellow:** Suspicious (Warning).
+    * **Red:** Dangerous (Blocked).
+    * A numerical **threat score** is displayed on the icon's badge.
+* **Detailed "Report Card" Popup:** Clicking the extension icon displays a comprehensive breakdown:
+    * Final security status.
+    * The total calculated threat score.
+    * A detailed list of the **specific reasons** why the site was flagged (e.g., "Flagged by Google Safe Browsing," "New Domain (2 days old)," "Found 'login' keyword in URL").
+
+* **Full "Control Room" (Settings Page):** A dedicated options page for users to manage their settings:
+    * View and edit their personal **Whitelist** and **Blacklist**.
+    * Access the **Scan History**.
+
+* **Scan History:** The settings page keeps a history of the **last 10 scanned websites** and their final security results for review.
+
+***
+
+### 💻 Professional Codebase
+
+The extension is built on a modern, maintainable, and efficient foundation:
+
+* **Organized Structure:** The code is logically organized into a clean folder structure (`background`, `popup`, `options`, `content`, `assets`) following best practices for Chrome/Firefox extensions.
+* **Asynchronous Operations:** All API calls and heavy operations utilize **modern `async/await` syntax** to ensure the browser remains responsive and the UI never freezes during a security scan.
 
 ## 🔬 Core Detection Logic (The "Uniqueness")
 
