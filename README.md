@@ -84,7 +84,7 @@ The extension is built on a modern, maintainable, and efficient foundation:
 
 * **Organized Structure:** The code is logically organized into a clean folder structure (`background`, `popup`, `options`, `content`, `assets`) following best practices for Chrome/Firefox extensions.
 * **Asynchronous Operations:** All API calls and heavy operations utilize **modern `async/await` syntax** to ensure the browser remains responsive and the UI never freezes during a security scan.
-
+***
 ## 🔬 Core Detection Logic (The "Uniqueness")
 
 PhishingShield's strength lies in its **heuristic analysis**—a set of rules that identify characteristics unique to malicious URLs, moving beyond simple static blacklists. Our detection model is based on the following key metrics:
